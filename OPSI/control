@@ -1,6 +1,6 @@
 [Package]
 version: 1
-depends:
+depends: 
 incremental: False
 
 [Product]
@@ -9,12 +9,12 @@ id: dfn_publishorperish
 name: Publish or Perish
 description: Publish or Perish is a software program that retrieves and analyzes academic citations.
 advice: 
-version: 4.20.0
+version: 4.23.0
 priority: 0
 licenseRequired: False
-productClasses:
-setupScript: setup.ins
-uninstallScript: uninstall.ins
+productClasses: 
+setupScript: setup.opsiscript
+uninstallScript: uninstall.opsiscript
 updateScript: 
 alwaysScript: 
 onceScript: 
@@ -22,9 +22,9 @@ customScript:
 userLoginScript: 
 
 [Changelog]
-
 publishorperish (4.0.18-1) testing; urgency=low
 
   * Initial package
 
  -- Eric Esser <esser@wzb.eu>  Tue, 14 May 2013 14:16:26 +0000
+
