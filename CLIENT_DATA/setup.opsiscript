@@ -6,7 +6,6 @@
 [Actions]
 requiredWinstVersion >= "4.11.2.6"
 
-DefVar $MsiId$
 DefVar $UninstallProgram$
 DefVar $LogDir$
 DefVar $ProductId$  
@@ -19,6 +18,10 @@ DefVar $LicensePool$
 DefVar $PackageVersion$
 DefVar $Version$
 DefVar $PrettyName$
+DefVar $WorkingDir$	
+DefVar $PathToExe$
+DefVar $DesktopLinkName$
+DefVar $Property_DesktopLink$
 
 Set $LogDir$ = "%SystemDrive%\tmp"
 
@@ -32,10 +35,13 @@ Set $ProductId$       = "publishorperish"
 Set $MinimumSpace$    = "5 MB"
 ; the path were we find the product after the installation
 Set $InstallDir$      = "%ProgramFiles32Dir%\Harzing's Publish or Perish 4"
+Set $WorkingDir$			= $InstallDir$ + "\Bin"
+Set $PathToExe$       = $WorkingDir$ + "\PoP.exe"
 Set $LicenseRequired$ = "false"
 Set $LicensePool$     = "p_" + $ProductId$
-
 Set $PrettyName$ 			= "Publish or Perish"
+Set $DesktopLinkName$ = $PrettyName$ 
+Set $Property_DesktopLink$ = GetProductProperty("DesktopLink","True")
 Set $PackageVersion$	= takeString(1, splitString ("%installingProdVersion%","-"))
 Set $Version$	= strPart("%installingProdVersion%", "1", calculate(strPos("%installingProdVersion%","-") + "-" + "1" ))
 ; ----------------------------------------------------------------
@@ -65,16 +71,14 @@ else
 	Winbatch_install
 	Sub_check_exitcode
 	
-	comment "Copy files"
-	Files_install /32Bit
-	
-	comment "Patch Registry"
-	Registry_install /32Bit
-	
-	comment "Create shortcuts"
-	LinkFolder_install
+	if $Property_DesktopLink$ = "True"
+    Linkfolder_create
+  else
+    Linkfolder_delete
+  endif
 	
 endif
+
 
 [Winbatch_install]
 ; Choose one of the following examples as basis for your installation
@@ -103,6 +107,28 @@ endif
 ; You may use an answer file by the parameter /LOADINF="filename"
 ; "%ScriptPath%\setup.exe" /sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES
 
+
+[LinkFolder_create]
+; create an shortcut to the installed exe on AllUsers desktop:
+set_basefolder common_desktopdirectory
+set_subfolder ""
+set_link
+       name: $DesktopLinkName$
+       target: $PathToExe$
+       parameters:
+       working_dir: $InstallDir$
+       icon_file:
+       icon_index:
+end_link
+;
+[LinkFolder_delete]
+; delete an shortcut to the installed exe on AllUsers desktop:
+set_basefolder common_desktopdirectory
+set_subfolder ""
+delete_element $DesktopLinkName$
+; delete a folder from AllUsers startmenu:
+;set_basefolder common_programs
+;delete_subfolder $ProductId$
 
 [Sub_get_licensekey]
 if opsiLicenseManagementEnabled
@@ -140,7 +166,6 @@ else
 	LogError "Fatal: license required, but license management not enabled"
 	isFatalError
 endif
-
 
 [Sub_check_exitcode]
 comment "Test for installation success via exit code"

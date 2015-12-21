@@ -6,7 +6,6 @@
 [Actions]
 requiredWinstVersion >= "4.11.2.6"
 
-DefVar $MsiId$
 DefVar $UninstallProgram$
 DefVar $LogDir$
 DefVar $ExitCode$
@@ -14,6 +13,9 @@ DefVar $ProductId$
 DefVar $InstallDir$
 DefVar $LicenseRequired$
 DefVar $LicensePool$
+DefVar $Property_DesktopLink$
+DefVar $DesktopLinkName$
+DefVar $PrettyName$
 
 Set $LogDir$ = "%SystemDrive%\tmp"
 
@@ -24,13 +26,16 @@ Set $ProductId$       = "publishorperish"
 Set $InstallDir$      = "%ProgramFiles32Dir%\Harzing's Publish or Perish 4"
 Set $LicenseRequired$ = "false"
 Set $LicensePool$     = "p_" + $ProductId$
+Set $Property_DesktopLink$ = GetProductProperty("DesktopLink","True")
+Set $PrettyName$      = "Publish or Perish"
+Set $DesktopLinkName$ = $PrettyName$
 ; ----------------------------------------------------------------
 
 
 comment "Show product picture"
 ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
 
-Message "Uninstalling " + $ProductId$ + " ..."
+Message "Uninstalling " + $PrettyName$ + " ..."
 
 if FileExists("%ScriptPath%\delsub.opsiscript")
 	comment "Start uninstall sub section"

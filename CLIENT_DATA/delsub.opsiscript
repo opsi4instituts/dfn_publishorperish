@@ -5,9 +5,11 @@
 
 ;setloglevel=7
 
-Set $MsiId$ = '{5676f50b-9b69-415a-acb5-e591bf48d282}'
 ;Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
-Set $UninstallProgram$ = "%CommonAppdataDir%" + "\Tarma Installer\{5676F50B-9B69-415A-ACB5-E591BF48D282}\Setup.exe"
+DefVar $MsiId$
+
+Set $MsiId$ = "{5676F50B-9B69-415A-ACB5-E591BF48D282}"
+Set $UninstallProgram$ = "%CommonAppdataDir%" + "\InstallMate\{5676F50B-9B69-415A-ACB5-E591BF48D282}\Setup.exe"
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
@@ -23,18 +25,12 @@ if FileExists($UninstallProgram$)
 	sub_check_exitcode
 endif
 
-comment "Delete files"
-Files_uninstall /32Bit
-
-comment "Cleanup registry"
-Registry_uninstall /32Bit
-
 comment "Delete program shortcuts"
 LinkFolder_uninstall
 
 [Winbatch_uninstall]
 ;"%ScriptPath%\PoPSetup.exe" /remove /q
-"$UninstallProgram$" /remove /q2
+"$UninstallProgram$" /remove /q
 ; Choose one of the following examples as basis for program uninstall
 ;
 ; === Nullsoft Scriptable Install System ================================================================
@@ -45,19 +41,8 @@ LinkFolder_uninstall
 ; === Inno Setup ========================================================================================
 ; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
 
-
 [Winbatch_uninstall_msi]
 msiexec /x $MsiId$ /qb! REBOOT=ReallySuppress
-
-[Files_uninstall]
-; Example for recursively deleting the installation directory:
-;
-; del -sf "$InstallDir$\"
-
-[Registry_uninstall]
-; Example of deleting a registry key:
-;
-; deletekey [HKEY_LOCAL_MACHINE\Software\$ProductId$]
 
 [LinkFolder_uninstall]
 ; Example of deleting a folder from AllUsers startmenu:
@@ -67,9 +52,9 @@ msiexec /x $MsiId$ /qb! REBOOT=ReallySuppress
 ;
 ; Example of deleting a shortcut from AllUsers desktop:
 ;
-; set_basefolder common_desktopdirectory
-; set_subfolder ""
-; delete_element $ProductId$
+set_basefolder common_desktopdirectory
+set_subfolder ""
+delete_element $DesktopLinkName$
 
 [Sub_check_exitcode]
 comment "Test for installation success via exit code"
