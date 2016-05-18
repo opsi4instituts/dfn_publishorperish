@@ -12,9 +12,6 @@ DefVar $ProductId$
 DefVar $MinimumSpace$
 DefVar $InstallDir$
 DefVar $ExitCode$
-DefVar $LicenseRequired$
-DefVar $LicenseKey$
-DefVar $LicensePool$
 DefVar $PackageVersion$
 DefVar $Version$
 DefVar $PrettyName$
@@ -22,7 +19,8 @@ DefVar $WorkingDir$
 DefVar $PathToExe$
 DefVar $DesktopLinkName$
 DefVar $Property_DesktopLink$
-
+DefVar $CustomPostInstall$
+	
 Set $LogDir$ = "%SystemDrive%\tmp"
 
 ; ----------------------------------------------------------------
@@ -37,8 +35,6 @@ Set $MinimumSpace$    = "5 MB"
 Set $InstallDir$      = "%ProgramFiles32Dir%\Harzing's Publish or Perish 4"
 Set $WorkingDir$			= $InstallDir$ + "\Bin"
 Set $PathToExe$       = $WorkingDir$ + "\PoP.exe"
-Set $LicenseRequired$ = "false"
-Set $LicensePool$     = "p_" + $ProductId$
 Set $PrettyName$ 			= "Publish or Perish"
 Set $DesktopLinkName$ = $PrettyName$ 
 Set $Property_DesktopLink$ = GetProductProperty("DesktopLink","True")
@@ -61,11 +57,6 @@ else
 	
 	Message "Installing " + $ProductId$ + " ..."
 	
-	if $LicenseRequired$ = "true"
-		comment "Licensing required, reserve license and get license key"
-		Sub_get_licensekey
-	endif
-	
 	comment "Start setup program"
 	ChangeDirectory "%SCRIPTPATH%"
 	Winbatch_install
@@ -77,6 +68,14 @@ else
     Linkfolder_delete
   endif
 	
+  comment "include custom post install file"
+  set $CustomPostInstall$ = getProductProperty("custom-post-install","none")
+  if not ($CustomPostInstall$ = "none")
+	  if FileExists("%ScriptPath%\custom\" + $CustomPostInstall$)
+		  include_insert "%ScriptPath%\custom\" + $CustomPostInstall$
+	  endif
+  endif
+	
 endif
 
 
@@ -86,27 +85,6 @@ endif
 ;
 ; === Nullsoft Scriptable Install System ================================================================
 "%ScriptPath%\PoPSetup.exe" /b0 /q
-;
-; === MSI package =======================================================================================
-; You may use the parameter PIDKEY=$Licensekey$
-; msiexec /i "%ScriptPath%\some.msi" /l* "$LogDir$\$ProductId$.install_log.txt" /qb! ALLUSERS=1 REBOOT=ReallySuppress
-;
-; === InstallShield + MSI=====================================================================================
-; Attention: The path to the log file should not contain any whitespaces
-; "%ScriptPath%\setup.exe" /s /v" /l* $LogDir$\$ProductId$.install_log.txt /qb! ALLUSERS=1 REBOOT=ReallySuppress"
-; "%ScriptPath%\setup.exe" /s /v" /qb! ALLUSERS=2 REBOOT=ReallySuppress"
-;
-; === InstallShield =====================================================================================
-; Create setup.iss answer file by running: setup.exe /r /f1"c:\setup.iss"
-; You may use an answer file by the parameter /f1"c:\setup.iss"
-; "%ScriptPath%\setup.exe" /s /sms /f2"$LogDir$\$ProductId$.install_log.txt"
-;
-; === Inno Setup ========================================================================================
-; http://unattended.sourceforge.net/InnoSetup_Switches_ExitCodes.html
-; You may create setup answer file by: setup.exe /SAVEINF="filename"
-; You may use an answer file by the parameter /LOADINF="filename"
-; "%ScriptPath%\setup.exe" /sp- /silent /norestart /nocancel /SUPPRESSMSGBOXES
-
 
 [LinkFolder_create]
 ; create an shortcut to the installed exe on AllUsers desktop:
@@ -129,43 +107,6 @@ delete_element $DesktopLinkName$
 ; delete a folder from AllUsers startmenu:
 ;set_basefolder common_programs
 ;delete_subfolder $ProductId$
-
-[Sub_get_licensekey]
-if opsiLicenseManagementEnabled
-	comment "License management is enabled and will be used"
-
-	comment "Trying to get a license key"
-	Set $LicenseKey$ = demandLicenseKey ($LicensePool$)
-	; If there is an assignment of exactly one licensepool to the product the following call is possible:
-	; Set $LicenseKey$ = demandLicenseKey ("", $ProductId$)
-	;
-	; If there is an assignment of a license pool to a windows software id, it is possible to use:
-	; DefVar $WindowsSoftwareId$
-	; $WindowsSoftwareId$ = "..."
-	; Set $LicenseKey$ = demandLicenseKey ("", "", $WindowsSoftwareId$)
-	
-	DefVar $ServiceErrorClass$
-	set $ServiceErrorClass$ = getLastServiceErrorClass
-	comment "Error class: " + $ServiceErrorClass$
-	
-	if $ServiceErrorClass$ = "None"
-		comment "Everything fine, we got the license key '" + $LicenseKey$ + "'"
-	else
-		if $ServiceErrorClass$ = "LicenseConfigurationError"
-			LogError "Fatal: license configuration must be corrected"
-			LogError getLastServiceErrorMessage
-			isFatalError
-		else 
-			if $ServiceErrorClass$ = "LicenseMissingError"
-				LogError "Fatal: required license is not supplied"
-				isFatalError
-			endif
-		endif
-	endif
-else
-	LogError "Fatal: license required, but license management not enabled"
-	isFatalError
-endif
 
 [Sub_check_exitcode]
 comment "Test for installation success via exit code"

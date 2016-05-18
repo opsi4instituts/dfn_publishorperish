@@ -9,7 +9,7 @@ id: dfn_publishorperish
 name: Publish or Perish
 description: Publish or Perish is a software program that retrieves and analyzes academic citations.
 advice: 
-version: 4.24.0
+version: 4.26.1
 priority: 0
 licenseRequired: False
 productClasses: 
@@ -27,10 +27,27 @@ name: desktoplink
 description: generate or delete DesktopLink
 default: True
 
+[ProductProperty]
+type: unicode
+name: custom-post-install
+multivalue: False
+editable: True
+description: Define filename for include script in custom directory after installation
+values: ["none", "post-install.opsiinc"]
+default: ["none"]
+
+[ProductProperty]
+type: unicode
+name: custom-post-deinstall
+multivalue: False
+editable: True
+description: Define filename for include script in custom directory after deinstallation
+values: ["none", "post-deinstall.opsiinc"]
+default: ["none"]
+
 [Changelog]
 publishorperish (4.0.18-1) testing; urgency=low
 
   * Initial package
 
  -- Eric Esser <esser@wzb.eu>  Tue, 14 May 2013 14:16:26 +0000
-

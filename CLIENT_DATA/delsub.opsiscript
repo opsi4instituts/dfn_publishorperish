@@ -13,6 +13,8 @@ Set $UninstallProgram$ = "%CommonAppdataDir%" + "\InstallMate\{5676F50B-9B69-415
 
 Message "Uninstalling " + $ProductId$ + " ..."
 
+Killtask "PoP.exe"
+
 if not (GetRegistryStringValue32("[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ + "] DisplayName") = "")
 	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
 	Winbatch_uninstall_msi
