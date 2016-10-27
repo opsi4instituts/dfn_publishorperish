@@ -6,7 +6,6 @@
 [Actions]
 requiredWinstVersion >= "4.11.2.6"
 
-DefVar $UninstallProgram$
 DefVar $LogDir$
 DefVar $ProductId$  
 DefVar $MinimumSpace$
@@ -29,17 +28,16 @@ Set $LogDir$ = "%SystemDrive%\tmp"
 ;$ProductId$ should be the name of the product in opsi
 ; therefore please: only lower letters, no umlauts, 
 ; no white space use '-' as a seperator
-Set $ProductId$       = "publishorperish"
-Set $MinimumSpace$    = "5 MB"
-; the path were we find the product after the installation
-Set $InstallDir$      = "%ProgramFiles32Dir%\Harzing's Publish or Perish 4"
-Set $WorkingDir$			= $InstallDir$ + "\Bin"
-Set $PathToExe$       = $WorkingDir$ + "\PoP.exe"
-Set $PrettyName$ 			= "Publish or Perish"
-Set $DesktopLinkName$ = $PrettyName$ 
+Set $ProductId$            = "publishorperish"
+Set $MinimumSpace$         = "5 MB"
+Set $InstallDir$           = "%ProgramFiles32Dir%\Harzing's Publish or Perish 5"
+Set $WorkingDir$			     = $InstallDir$ + "\Bin"
+Set $PathToExe$            = $WorkingDir$ + "\PoP.exe"
+Set $PrettyName$ 		     	 = "Publish or Perish"
+Set $DesktopLinkName$      = $PrettyName$ 
 Set $Property_DesktopLink$ = GetProductProperty("DesktopLink","True")
-Set $PackageVersion$	= takeString(1, splitString ("%installingProdVersion%","-"))
-Set $Version$	= strPart("%installingProdVersion%", "1", calculate(strPos("%installingProdVersion%","-") + "-" + "1" ))
+Set $PackageVersion$	     = takeString(1, splitString ("%installingProdVersion%","-"))
+Set $Version$	             = strPart("%installingProdVersion%", "1", calculate(strPos("%installingProdVersion%","-") + "-" + "1" ))
 ; ----------------------------------------------------------------
 
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
@@ -54,7 +52,7 @@ else
 		comment "Start uninstall sub section"
 		Sub "%ScriptPath%\delsub.opsiscript"
 	endif
-	
+		
 	Message "Installing " + $ProductId$ + " ..."
 	
 	comment "Start setup program"
@@ -84,7 +82,7 @@ endif
 ; You can use $LicenseKey$ var to pass a license key to the installer
 ;
 ; === Nullsoft Scriptable Install System ================================================================
-"%ScriptPath%\PoPSetup.exe" /b0 /q
+"%ScriptPath%\PoP5Setup.exe" /b0 /q
 
 [LinkFolder_create]
 ; create an shortcut to the installed exe on AllUsers desktop:

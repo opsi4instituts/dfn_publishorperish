@@ -6,7 +6,6 @@
 [Actions]
 requiredWinstVersion >= "4.11.2.6"
 
-DefVar $UninstallProgram$
 DefVar $LogDir$
 DefVar $ExitCode$
 DefVar $ProductId$

@@ -5,55 +5,40 @@
 
 ;setloglevel=7
 
-;Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
-DefVar $MsiId$
+;==========================================================================================================
+; Variables
+DefVar $UninstMsiId$
+DefVar $UninstallString$
+DefVar $UninstallProgram$
+DefStringList $MsiIds$
 
-Set $MsiId$ = "{5676F50B-9B69-415A-ACB5-E591BF48D282}"
-Set $UninstallProgram$ = "%CommonAppdataDir%" + "\InstallMate\{5676F50B-9B69-415A-ACB5-E591BF48D282}\Setup.exe"
+Set $MsiIds$ = addtolist($MsiIds$, "{5676F50B-9B69-415A-ACB5-E591BF48D282}")
+Set $MsiIds$ = addtolist($MsiIds$, "{E310D575-C678-46BB-9024-B68E618A398B}")
 
+;==========================================================================================================
+; Program logic
 Message "Uninstalling " + $ProductId$ + " ..."
-
 Killtask "PoP.exe"
-
-if not (GetRegistryStringValue32("[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $MsiId$ + "] DisplayName") = "")
-	comment "MSI id " + $MsiId$ + " found in registry, starting msiexec to uninstall"
-	Winbatch_uninstall_msi
-	sub_check_exitcode
-endif
-
-if FileExists($UninstallProgram$)
-	comment "Uninstall program found, starting uninstall"
-	Winbatch_uninstall
-	sub_check_exitcode
-endif
-
+for %actmsi% in $MsiIds$ do sub_remove_by_msiid
 comment "Delete program shortcuts"
 LinkFolder_uninstall
 
-[Winbatch_uninstall]
-;"%ScriptPath%\PoPSetup.exe" /remove /q
-"$UninstallProgram$" /remove /q
-; Choose one of the following examples as basis for program uninstall
-;
-; === Nullsoft Scriptable Install System ================================================================
-; maby better Call as
-; Winbatch_uninstall /WaitforProcessending "Au_.exe" /Timeoutseconds 10
-; "$UninstallProgram$" /S
-;
-; === Inno Setup ========================================================================================
-; "$UninstallProgram$" /silent /norestart /SUPPRESSMSGBOXES /nocancel
+;==========================================================================================================
+; Functions
+[sub_remove_by_msiid]
+Set $UninstMsiId$ = "%actmsi%"
+Set $UninstallString$ = GetRegistryStringValue64("[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\%actmsi%] QuietUninstallString")
+Set $UninstallProgram$ = takeString(0, splitString ($UninstallString$," "))
+if FileExists($UninstallProgram$)
+  comment $ProductId$ + " installation found, starting uninstall"
+  Winbatch_uninstall
+  sub_check_exitcode
+endif
 
-[Winbatch_uninstall_msi]
-msiexec /x $MsiId$ /qb! REBOOT=ReallySuppress
+[Winbatch_uninstall]
+$UninstallString$
 
 [LinkFolder_uninstall]
-; Example of deleting a folder from AllUsers startmenu:
-;
-; set_basefolder common_programs
-; delete_subfolder $ProductId$
-;
-; Example of deleting a shortcut from AllUsers desktop:
-;
 set_basefolder common_desktopdirectory
 set_subfolder ""
 delete_element $DesktopLinkName$
@@ -86,4 +71,3 @@ else
 		endif
 	endif
 endif
-
