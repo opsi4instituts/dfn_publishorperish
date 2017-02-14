@@ -9,7 +9,7 @@ id: dfn_publishorperish
 name: Publish or Perish
 description: Publish or Perish is a software program that retrieves and analyzes academic citations.
 advice: 
-version: 5.23.0
+version: 5.26.2
 priority: 0
 licenseRequired: False
 productClasses: 
