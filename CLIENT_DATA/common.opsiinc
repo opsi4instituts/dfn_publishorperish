@@ -1,0 +1,45 @@
+requiredWinstVersion >= "4.11.2.6"
+
+DefVar $CustomPostDeinstall$
+DefVar $CustomPostInstall$
+DefVar $DesktopLinkName$
+DefVar $ExitCode$
+DefVar $InstallDir$
+DefVar $LogDir$
+DefVar $MinimumSpace$
+DefVar $PathToExe$
+DefVar $PackageVersion$
+DefVar $PrettyName$
+DefVar $ProcessName$
+DefVar $ProductId$
+DefVar $Property_DesktopLink$
+DefVar $Version$
+DefVar $WorkingDir$	
+
+Set $LogDir$ = "%SystemDrive%\tmp"
+
+; ----------------------------------------------------------------
+; - Please edit the following values                             -
+; ----------------------------------------------------------------
+;$ProductId$ should be the name of the product in opsi
+; therefore please: only lower letters, no umlauts, 
+; no white space use '-' as a seperator
+Set $ProductId$            = "publishorperish"
+Set $MinimumSpace$         = "50 MB"
+Set $InstallDir$           = "%ProgramFiles64Dir%\Harzing's Publish or Perish 6"
+Set $WorkingDir$			     = $InstallDir$ + "\Bin"
+Set $ProcessName$          = "PoP.exe"
+Set $PathToExe$            = $WorkingDir$ + "\" + $ProcessName$
+Set $PrettyName$ 		     	 = "Publish or Perish"
+Set $DesktopLinkName$      = $PrettyName$ 
+Set $Property_DesktopLink$ = GetProductProperty("DesktopLink","True")
+Set $PackageVersion$	     = takeString(1, splitString ("%installingProdVersion%","-"))
+Set $Version$	             = strPart("%installingProdVersion%", "1", calculate(strPos("%installingProdVersion%","-") + "-" + "1" ))
+; ----------------------------------------------------------------
+
+Killtask $ProcessName$
+
+comment "Show product picture"
+ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+

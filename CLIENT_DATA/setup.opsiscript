@@ -4,41 +4,8 @@
 ; credits: http://www.opsi.org/en/credits/
 
 [Actions]
-requiredWinstVersion >= "4.11.2.6"
-
-DefVar $LogDir$
-DefVar $ProductId$  
-DefVar $MinimumSpace$
-DefVar $InstallDir$
-DefVar $ExitCode$
-DefVar $PackageVersion$
-DefVar $Version$
-DefVar $PrettyName$
-DefVar $WorkingDir$	
-DefVar $PathToExe$
-DefVar $DesktopLinkName$
-DefVar $Property_DesktopLink$
-DefVar $CustomPostInstall$
-	
-Set $LogDir$ = "%SystemDrive%\tmp"
-
-; ----------------------------------------------------------------
-; - Please edit the following values                             -
-; ----------------------------------------------------------------
-;$ProductId$ should be the name of the product in opsi
-; therefore please: only lower letters, no umlauts, 
-; no white space use '-' as a seperator
-Set $ProductId$            = "publishorperish"
-Set $MinimumSpace$         = "5 MB"
-Set $InstallDir$           = "%ProgramFiles32Dir%\Harzing's Publish or Perish 5"
-Set $WorkingDir$			     = $InstallDir$ + "\Bin"
-Set $PathToExe$            = $WorkingDir$ + "\PoP.exe"
-Set $PrettyName$ 		     	 = "Publish or Perish"
-Set $DesktopLinkName$      = $PrettyName$ 
-Set $Property_DesktopLink$ = GetProductProperty("DesktopLink","True")
-Set $PackageVersion$	     = takeString(1, splitString ("%installingProdVersion%","-"))
-Set $Version$	             = strPart("%installingProdVersion%", "1", calculate(strPos("%installingProdVersion%","-") + "-" + "1" ))
-; ----------------------------------------------------------------
+; common Values for (de)installation
+include_insert "common.opsiinc"
 
 if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
 	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
@@ -82,7 +49,7 @@ endif
 ; You can use $LicenseKey$ var to pass a license key to the installer
 ;
 ; === Nullsoft Scriptable Install System ================================================================
-"%ScriptPath%\PoP5Setup.exe" /b0 /q
+"%ScriptPath%\PoP6Setup.exe" /b0 /q
 
 [LinkFolder_create]
 ; create an shortcut to the installed exe on AllUsers desktop:

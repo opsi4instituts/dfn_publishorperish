@@ -1,35 +1,6 @@
-; Copyright (c) uib gmbh (www.uib.de)
-; This sourcecode is owned by uib gmbh
-; and published under the Terms of the General Public License.
-; credits: http://www.opsi.org/en/credits/
-
 [Actions]
-requiredWinstVersion >= "4.11.2.6"
-
-DefVar $LogDir$
-DefVar $ExitCode$
-DefVar $ProductId$
-DefVar $InstallDir$
-DefVar $Property_DesktopLink$
-DefVar $DesktopLinkName$
-DefVar $PrettyName$
-DefVar $CustomPostDeinstall$
-
-Set $LogDir$ = "%SystemDrive%\tmp"
-
-; ----------------------------------------------------------------
-; - Please edit the following values                             -
-; ----------------------------------------------------------------
-Set $ProductId$       = "publishorperish"
-Set $InstallDir$      = "%ProgramFiles32Dir%\Harzing's Publish or Perish 4"
-Set $Property_DesktopLink$ = GetProductProperty("DesktopLink","True")
-Set $PrettyName$      = "Publish or Perish"
-Set $DesktopLinkName$ = $PrettyName$
-; ----------------------------------------------------------------
-
-
-comment "Show product picture"
-ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+; common Values for (de)installation
+include_insert "common.opsiinc"
 
 Message "Uninstalling " + $PrettyName$ + " ..."
 
