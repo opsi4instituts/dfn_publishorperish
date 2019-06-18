@@ -26,9 +26,9 @@ Set $LogDir$ = "%SystemDrive%\tmp"
 ; no white space use '-' as a seperator
 Set $ProductId$            = "publishorperish"
 Set $MinimumSpace$         = "50 MB"
-Set $InstallDir$           = "%ProgramFiles64Dir%\Harzing's Publish or Perish 6"
-Set $WorkingDir$			     = $InstallDir$ + "\Bin"
-Set $ProcessName$          = "PoP.exe"
+Set $InstallDir$           = "%ProgramFiles64Dir%\Harzing's Publish or Perish 7"
+Set $WorkingDir$			     = $InstallDir$
+Set $ProcessName$          = "popwin.exe"
 Set $PathToExe$            = $WorkingDir$ + "\" + $ProcessName$
 Set $PrettyName$ 		     	 = "Publish or Perish"
 Set $DesktopLinkName$      = $PrettyName$ 

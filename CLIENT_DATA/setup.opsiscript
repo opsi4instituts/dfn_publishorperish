@@ -49,7 +49,7 @@ endif
 ; You can use $LicenseKey$ var to pass a license key to the installer
 ;
 ; === Nullsoft Scriptable Install System ================================================================
-"%ScriptPath%\PoP6Setup.exe" /b0 /q
+"%ScriptPath%\PoP7Setup.exe" /b0 /q
 
 [LinkFolder_create]
 ; create an shortcut to the installed exe on AllUsers desktop:
